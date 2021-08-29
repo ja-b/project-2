@@ -5,4 +5,8 @@ if (CMAKE_CUDA_COMPILER)
     target_link_libraries(daxpy_gpu PUBLIC helper_cuda)
     target_link_libraries(hello_blockid PUBLIC helper_cuda)
     target_link_libraries(hello_threadid PUBLIC helper_cuda)
+
+    target_include_directories(daxpy_gpu PUBLIC ${PAPI_INCLUDE_DIRS})
+    target_link_libraries(daxpy_gpu PUBLIC OpenMP::OpenMP_C)
+    target_link_libraries(daxpy_gpu PUBLIC ${PAPI_LIBRARIES})
 endif()
