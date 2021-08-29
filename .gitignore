@@ -1,6 +1,8 @@
 # Prerequisites
 *.d
 
+cmake-*/
+
 # Object files
 *.o
 *.ko

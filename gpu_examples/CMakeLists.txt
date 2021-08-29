@@ -1,0 +1,8 @@
+if (CMAKE_CUDA_COMPILER)
+    add_executable(daxpy_gpu daxpy.cu)
+    add_executable(hello_blockid hello_blockid.cu)
+    add_executable(hello_threadid hello_threadid.cu)
+    target_link_libraries(daxpy_gpu PUBLIC helper_cuda)
+    target_link_libraries(hello_blockid PUBLIC helper_cuda)
+    target_link_libraries(hello_threadid PUBLIC helper_cuda)
+endif()

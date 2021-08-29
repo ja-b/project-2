@@ -1,0 +1,23 @@
+cmake_minimum_required(VERSION 3.11)
+project(advanced_ca_projec2 C CXX)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+find_package(PAPI)
+find_package(OpenMP)
+
+set(CMAKE_C_FLAGS_DEBUG "-O0 -DOMP -DPAPI")
+set(CMAKE_C_FLAGS_RELEASE "-O2 -DOMP -DPAPI")
+
+include(CheckLanguage)
+check_language(CUDA)
+if (CMAKE_CUDA_COMPILER)
+    enable_language(CUDA)
+endif ()
+
+# CUDA Helpers
+if (CMAKE_CUDA_COMPILER)
+    add_library(helper_cuda INTERFACE)
+    target_include_directories(helper_cuda INTERFACE helper_cuda/)
+endif ()
+
+add_subdirectory(gpu_examples)
+add_subdirectory(src)
