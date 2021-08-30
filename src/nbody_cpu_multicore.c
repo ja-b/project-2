@@ -92,6 +92,11 @@ int main(const int argc, const char** argv) {
 
   PAPI_stop_counters(values, num_events);
 
+  for(int i=0; i < num_events; i++) {
+    PAPI_event_code_to_name(Events[i], event_name);
+    printf("%s:%lld\n", event_name, values[i]);
+  }
+
   double avgTime = totalTime / (double)(nIters-1); 
 
   printf("avgTime: %f   totTime: %f \n", avgTime, totalTime);
