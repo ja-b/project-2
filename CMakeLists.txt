@@ -4,8 +4,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 find_package(PAPI)
 find_package(OpenMP)
 
-set(CMAKE_C_FLAGS_DEBUG "-O0 -DOMP -DPAPI")
-set(CMAKE_C_FLAGS_RELEASE "-O2 -DOMP -DPAPI")
+set(CMAKE_C_FLAGS_DEBUG "-std=c99 -O0 -DOMP -DPAPI")
+set(CMAKE_C_FLAGS_RELEASE "-std=c99 -O2 -DOMP -DPAPI")
 
 include(CheckLanguage)
 check_language(CUDA)
