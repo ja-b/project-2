@@ -55,6 +55,35 @@
 ## 18
 ### GPU Optimization Explanation
 
+#### gpu1
+
+This implementation tries to parallelize computation with both CPU threads as well
+as GPU threads. CPU for the post-calc position update and GPU for the inter-force calculation.
+
+The CPU threading is straightforward, parallelize the simple (honestly SIMD) update.
+
+The GPU side is broken up across 1 axis of bodies, with each thread responsible for at most
+1 body.
+
+#### gpu2
+
+Similar to GPU1 but without openmp for the position update. Probably better considering the relative
+cost of position update.
+
+#### gpu3
+
+For the GPU block, write the starting position state for all bodies first as to avoid
+possible contention between threads. 
+
+My initial guess is that this would help from false-sharing perspecive (not to mention, correctness?)
+
+The syncthreads is there to converge on a state for each "sublock" of our routine.
+
+#### gpu4
+
+This adds a loop unroll for our loop per gpu thread. A probable way to improve occupancy
+by shedding away temporary state variables.
+
 ## 19
 ### Fraction of host/device copy
 

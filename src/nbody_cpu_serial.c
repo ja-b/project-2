@@ -54,6 +54,7 @@ int main(const int argc, const char** argv) {
   randomizeBodies(buf, 6*nBodies); // Init pos / vel data
 
   double totalTime = 0.0;
+  double computeForceTotalTime = 0.0;
 
   datafile = fopen("nbody.dat","w");
   fprintf(datafile,"%d %d %d\n", nBodies, nIters, 0);
@@ -76,7 +77,9 @@ int main(const int argc, const char** argv) {
 
     StartTimer();
 
+    const double bodystart = GetTimer();
     bodyForce(p, dt, nBodies);           // compute interbody forces
+    const double bodyend = GetTimer();
 
     for (int i = 0 ; i < nBodies; i++) { // integrate position
       p[i].x += p[i].vx*dt;
@@ -87,6 +90,7 @@ int main(const int argc, const char** argv) {
     const double tElapsed = GetTimer() / 1000.0;
     if (iter > 1) {                      // First iter is warm up
       totalTime += tElapsed;
+      computeForceTotalTime += (bodyend - bodystart) / 1000.0;
     }
   }
 

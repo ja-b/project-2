@@ -19,5 +19,10 @@ if (CMAKE_CUDA_COMPILER)
     target_include_directories(helper_cuda INTERFACE helper_cuda/)
 endif ()
 
+# Adds forced vectorization (and report) for ICC
+if (CMAKE_C_COMPILER_ID STREQUAL Intel)
+    add_compile_options(-xAVX -qopt-report-stdout)
+endif ()
+
 add_subdirectory(gpu_examples)
 add_subdirectory(src)
