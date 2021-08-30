@@ -102,8 +102,10 @@ int main(const int argc, const char** argv) {
   }
 
   double avgTime = totalTime / (double)(nIters-1);
+  double bodyavgTime = computeForceTotalTime / (double)(nIters-1);
 
   printf("avgTime: %f   totTime: %f \n", avgTime, totalTime);
+  printf("body_avgTime: %f   body_totTime: %f \n", bodyavgTime, computeForceTotalTime);
 
   free(buf);
 }
