@@ -59,6 +59,7 @@ int main(const int argc, const char** argv) {
   fprintf(datafile,"%d %d %d\n", nBodies, nIters, 0);
 
   //PAPI
+  char* event_name;
   long_long *values;
   int Events[] = {PAPI_TLB_DM, PAPI_BR_MSP, PAPI_BR_INS, PAPI_RES_STL};
   int num_events = sizeof(Events) / sizeof(int);
