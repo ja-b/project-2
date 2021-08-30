@@ -70,7 +70,8 @@ int main(const int argc, const char** argv) {
   Body *d_p = (Body*)d_buf;
 
   int nBlocks = (nBodies + BLOCK_SIZE - 1) / BLOCK_SIZE;
-  double totalTime = 0.0; 
+  double totalTime = 0.0;
+  double computeForceTotalTime = 0.0;
 
     datafile = fopen("nbody.dat","w");  /* open output file */
 //  fprintf(datafile,"%d %d %d\n", nBodies, nIters, 0);
@@ -83,10 +84,12 @@ int main(const int argc, const char** argv) {
 
     StartTimer();
 
+    const double bodystart = GetTimer();
     cudaMemcpy(d_buf, buf, bytes, cudaMemcpyHostToDevice);//copy data to GPU
     bodyForce<<<nBlocks, BLOCK_SIZE>>>(d_p, dt, nBodies); // compute interbody forces
     cudaMemcpy(buf, d_buf, bytes, cudaMemcpyDeviceToHost);//copy data back to CPU
-    
+    const double bodyend = GetTimer();
+
     #pragma omp parallel for 
     for (int i = 0 ; i < nBodies; i++) { // integrate positions forward
       p[i].x += p[i].vx*dt;
@@ -96,13 +99,16 @@ int main(const int argc, const char** argv) {
 
     const double tElapsed = GetTimer() / 1000.0;
     if (iter > 1) { // First iter is warm up
-      totalTime += tElapsed; 
+      totalTime += tElapsed;
+      computeForceTotalTime += (bodyend - bodystart) / 1000.0;
     }
   }
   fclose(datafile);
-  double avgTime = totalTime / (double)(nIters-1); 
+  double avgTime = totalTime / (double)(nIters-1);
+  double bodyavgTime = computeForceTotalTime / (double)(nIters-1);
 
   printf("avgTime: %f   totTime: %f \n", avgTime, totalTime);
+  printf("body_avgTime: %f   body_totTime: %f \n", bodyavgTime, computeForceTotalTime);
 
   free(buf);
   cudaFree(d_buf);
