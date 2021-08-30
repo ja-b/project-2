@@ -2,7 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include<omp.h>
+
+extern "C" {
 #include "timer.h"
+}
 
 #define BLOCK_SIZE 128
 #define SOFTENING 1e-9f
