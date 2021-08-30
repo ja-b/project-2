@@ -61,7 +61,7 @@ int main(const int argc, const char** argv) {
   //PAPI
   char* event_name;
   long_long *values;
-  int Events[] = {PAPI_TLB_DM, PAPI_BR_MSP, PAPI_BR_INS, PAPI_RES_STL};
+  int Events[] = {PAPI_FP_INS, PAPI_FP_OPS, PAPI_TOT_CYC, PAPI_LD_INS, PAPI_SR_INS, PAPI_L1_DCA, PAPI_L1_DCM, PAPI_L2_DCA, PAPI_L2_DCM, PAPI_L3_DCA, PAPI_L3_DCM, PAPI_TLB_DM, PAPI_BR_MSP, PAPI_BR_INS, PAPI_RES_STL};
   int num_events = sizeof(Events) / sizeof(int);
   PAPI_start_counters(Events, num_events);
   event_name = (char*)malloc(128);
