@@ -1,6 +1,8 @@
 
 # Project 2 Write-up
 
+This is the write-up for project 2. We answer each question (to our best ability, shortcomings are mentioned) below.
+
 ## 1
 ### Comparison Table
 
@@ -80,6 +82,7 @@ indidcating a cpu bound routine.
 When running for n=50000...
 
 PAPI_STL_CCY = 273429250826
+
 PAPI_TOT_CYC = 800989736575
 
 Which gives us roughly 34% stalled cycles. This would indicate that our code is still compute-bound and could see further imrprovement
@@ -258,6 +261,7 @@ A couple notes:
 For running with n=50000 (need to finish the assignment)
 
 PAPI_BR_MSP = 1006077
+
 PAPI_BR_INS = 100002253817
 
 Mispredict rate = 0.001006054 %
