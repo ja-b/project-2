@@ -4,6 +4,12 @@
 ## 1
 ### Comparison Table
 
+![Overall Report](img/overall_report.png)
+
+Note: I had trouble getting metrics to work in order to calculating FLOP/s numerically on GPU. Hence the blank section.
+
+We can clearly see that this code benefits greatly when run on a GPU (which makes sense given its SIMD nature)
+
 ## 2
 ### Serial Time Complexity
 
@@ -25,6 +31,12 @@ assuming a serial computer.
 ## 4
 ### GPU v. CPU Speedup
 
+Referencing our table in #1, we can see that the peak CPU scaling is at 40s and the peak GPU scaling is at 2.25s. This
+nets us a relative speedup of 17.98.
+
+(It should be pretty clear that GPU will definitely have a higher performance/dollar -- considering GPU cost scalability is
+definitely not north of 18)
+
 ## 5
 ### Amdahl Ceiling n=100000
 
@@ -44,7 +56,7 @@ Solving for `p` gives us `0.9868`. Which tells us that our bound (our sequential
 Using a thread count of 32...following the same steps as above.
 
 Sequential 500k = ?
-Parallel32 500k = 
+Parallel32 500k = 1016.639743
 
 Note: Doing a sequential run for 500k will probably take more time than I can afford right now. Will come back around
 if I have time remaining.
@@ -56,6 +68,22 @@ Solving for `p` gives us `0.9868`. Which tells us that our bound (our sequential
 
 ## 7
 ### Compute or Memory Bound
+
+My approach here given the relatively limited set of counters we have is to compare of ratio of the following two counters.
+
+- PAPI_STL_CCY (Papi cycles that resulted in no instructions being completed)
+- PAPI_TOT_CYC (Papi total cycles)
+
+The thought here is that a higher ratio of PAPI_STL_CCY / PAPI_TOT_CYC would indicate a memory bound routine, a lesser ratio
+indidcating a cpu bound routine.
+
+When running for n=50000...
+
+PAPI_STL_CCY = 273429250826
+PAPI_TOT_CYC = 800989736575
+
+Which gives us roughly 34% stalled cycles. This would indicate that our code is still compute-bound and could see further imrprovement
+if clock speed were increased (with a 0.66 improvement, essentially)
 
 ## 8
 ### CPU ICC
@@ -249,10 +277,16 @@ Note: I can't find an appropriate counter to use as a baseline for the TLB hit r
 Now in general, I don't expect many TLB misses in our code. Most of our code operates on the same contigous elements of memory,
 which should fit nicely with regards to address mappings. Though our code is O(n^2) our memory is still O(n).
 
-In general, TLB performance shouldn't have much of an impact on code performance.
+In general, TLB performance shouldn't have much of an impact on code performance unless you have many nbodies, where you start jumping
+past the sizes of the addresses managed in your TLB.
 
 ## 13
 ### Hardware Thread Gains
+
+Our lscpu indicates that there is 1 thread per CPU. So hyperthreading isn't enabled yet. I'm not sure how to "enable" this at a system level
+so all I can do is speculate.
+
+I imagine enabling hardware threading (hyperthreading) would add to some performance improvements just given the compute nature of this code.
 
 ## 14
 ### Thread count memory saturation
@@ -355,6 +389,14 @@ the api calls section to not actually include the gpu computation as well. 50% a
 
 ## 20
 ### GPU Occupancy
+
+I had trouble trying to get this to work on nvprof. All I can do here is speculate (and assume that a quicker runtime is due 
+to higher occupancy, which shouldn't be a stretch in GPU-land)
+
+We arrive at higher occupancy in each of our optimizations as follows.
+
+- From 2 to 3, since we take advantage of shared memory, each thread's access to the universe of bodies will lead to less stalling. This will lead to warps executing more deterministically which should lead to higher occupancy.
+- From 3 to 4, since we perform loop unrolling, we can remove register use for temporary variables. This should lead to less contention among warps and lead to higher occupancy.
 
 ## Addendum
 ### Resource Stats
