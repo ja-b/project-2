@@ -212,11 +212,44 @@ from vectorization in ICC.
 ## 10
 ### L1/L2/L3 Cache Hit Rate CPU
 
+~For running with n=50000 (need to finish the assignment)~
+Note: For running with n=10000 (witnessed weird behavior w/50000)
+
+We have recorded cache hit rates in the following table...
+
+![](img/cache_hit_rates.png)
+
+A couple notes:
+
+- L1 cache rate stays high for both implementations. I imagine this comes from data being contigous and when L1 lines come in we simply automatically benefit by each thread operating on contiguous elements.
+- L2 an L3 rates suffer for the multithreaded implementation, this is within expectations especially considering that there is quite the high amount of false-sharing going on when each thread has to visit the entire universe of bodies.
+
 ## 11
 ### Branch misprediction rate
 
+For running with n=50000 (need to finish the assignment)
+
+PAPI_BR_MSP = 1006077
+PAPI_BR_INS = 100002253817
+
+Mispredict rate = 0.001006054 %
+
+The misprediction rate is small for this code since the majority of branching lives in looping code. These branches can
+easily be predicted with the simplest of prediction methods, hence the small mispredict rate.
+
 ## 12
 ### TLB Hit Ratio
+
+For running with n=50000 (need to finish the assignment)
+
+PAPI_TLB_DM = 20619
+
+Note: I can't find an appropriate counter to use as a baseline for the TLB hit rate. I only have total misses. :(
+
+Now in general, I don't expect many TLB misses in our code. Most of our code operates on the same contigous elements of memory,
+which should fit nicely with regards to address mappings. Though our code is O(n^2) our memory is still O(n).
+
+In general, TLB performance shouldn't have much of an impact on code performance.
 
 ## 13
 ### Hardware Thread Gains
@@ -268,6 +301,14 @@ also shows us that further scaling past 32 leads to unsustainable runtimes.
 ## 17
 ### L1 miss rate serial v. multicore
 
+Based upon our results in section 10, L1 cache hit rates are roughly the same for both implementations. I think this mostly
+has to do with the iteration in general being on contigous sections of memory, and shouldn't be affected too much in a multithreaded
+environment. A given thread will operate on all other bodies (and thus will suffer from false sharing), but when those cache lines are loaded
+the multicore implementation should benefit from the next set of accesses to contigous memory.
+
+The above is different from L2/L3 cache where most of the time a thread will attempt to look in those caches (usually non contigously), there's
+a relatively high probability that its already been modified.
+
 ## 18
 ### GPU Optimization Explanation
 
@@ -305,6 +346,12 @@ by shedding away temporary state variables.
 
 ## 19
 ### Fraction of host/device copy
+
+![](img/host_device_copy.png)
+
+It makes sense that the cuda memcpy/malloc operations would be amortized for larger inputs. What's odd to me is this
+50% barrier. It got these values from `nvprof` but I am somewhat confused on why this is the case. Not sure if I mistook
+the api calls section to not actually include the gpu computation as well. 50% asymtote seems odd to say the least.
 
 ## 20
 ### GPU Occupancy
