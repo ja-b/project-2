@@ -75,6 +75,7 @@ We have the following equation, where we can solve for the fraction of execution
 this to get our percentage of sequential execution (and optimal bound).
 
 ![](img/speedup_eq_1.gif)
+
 ![](img/eqn_1.gif)
 
 Solving for `p` gives us `0.9868`. Which tells us that our bound (our sequential) is at `1.3%`.
