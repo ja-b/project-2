@@ -30,6 +30,33 @@ assuming a serial computer.
 ## 3
 ### Analytic Aritmetic Complexity
 
+We can compute the FLOP/s for our serial implementation loop as such
+
+Position Update:
+The position update is straightforward, it contains 3 adds and 3 multiplies on single-precision floats. This is done over N
+
+BodyForce Calculation:
+- For each N, we do 3 subtractions, 9 mults, 6 adds, 1 div over N. Not sure how many floating point operations are in sqrtf()
+- At the end, we update our particiles' velocities. via 3 adds and 3 multiplies. This is done over N.
+
+So for each word, we have the following FLOP count.
+- 6 ops for pos update.
+- N*19 ops for force calculation.
+- 6 ops for velocity update.
+
+Yields 12 + 19n FLOPs per word.
+
+For n=100000 --
+
+100000 * (12 + 19*100000) = 190001200000 FLOPs
+
+190001200000 / 1000000000) / 924.647 = 0.20548512026
+
+Now clearly 0.20548512026 FLOP/s is nowhere close to our measured 4.109 FLOP/s. We ignored the sqrtf() function call, which I imagine contains more than 1 floating point operation. The discrepancy would imply that there are 20 such operations in sqrtf(), which isn't unimaginable. Kinda wish I had more insight into this than this (this is the last question I'm doing at the moment, I'm tired to be honest :) ).
+
+Another thing to look at would be the re-run our above calculations with ffast-math turned on so that it yields a single FLOP for sqrt operations. We could then better directly compare the numerical results that way to verify our paper and pencil approach here.
+
+
 ## 4
 ### GPU v. CPU Speedup
 
